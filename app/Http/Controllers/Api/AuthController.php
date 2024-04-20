@@ -6,70 +6,94 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    /**
-     * Create user
-     *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
-     */
+
+    /* Register API */
     public function register(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'username' => 'required|string|unique:users',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
-            'password_confirmation' => 'required|same:password'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+                'password_confirmation' => 'required|same:password'
+            ]
+        );
 
-        $user = new User([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-
-        if ($user->save()) {
-            $tokenResult = $user->createToken('access-token');
-            $token = $tokenResult->plainTextToken;
-
-            return response()->json([
-                'message' => 'Successfully created user!',
-                'accessToken' => $token,
-            ], 201);
-        } else {
-            return response()->json(['error' => 'Provide proper details']);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
+
+        $username = strtolower(str_replace(' ', '_', $request->name)) . rand(10000, 99999);
+
+
+        $existingUser = User::where('username', $username)->first();
+
+        if ($existingUser) {
+            $suffix = 1;
+            do {
+                $newUsername = $username . '_' . $suffix;
+                $existingUser = User::where('username', $newUsername)->first();
+                $suffix++;
+            } while ($existingUser);
+
+            $username = $newUsername;
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+
+        // $token = Auth::login($user);
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'User Registered Successfully',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer'
+            ]
+        ]);
+
+
+
+
+
     }
 
 
-    /**
-     * Login user and create token
-     *
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [boolean] remember_me
-     */
-
+    /* Login API */
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'email' => 'required|string|email|exists:users,email',
+                'password' => 'required|string',
+            ]
+        );
+
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
 
         $credentials = request(['email', 'password']);
         if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+                'message' => 'Invalid credentials',
+            ], 404);
         }
 
         $user = $request->user();
@@ -77,12 +101,12 @@ class AuthController extends Controller
         $token = $tokenResult->plainTextToken;
 
         return response()->json([
+            'user' => $user,
             'message' => 'Successfully logged in',
             'accessToken' => $token,
             'token_type' => 'Bearer',
         ]);
     }
-
 
 
     /**
