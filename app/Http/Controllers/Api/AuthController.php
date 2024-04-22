@@ -109,6 +109,45 @@ class AuthController extends Controller
     }
 
 
+    public function google(Request $request)
+    {
+        // Check if the user exists by email
+        $user = User::where('email', $request->email)->first();
+
+        // If the user does not exist, create a new user
+        if (!$user) {
+            $username = strtolower(str_replace(' ', '_', $request->name)) . rand(10000, 99999);
+
+            // Ensure username is unique
+            while (User::where('username', $username)->exists()) {
+                $username .= rand(0, 9);
+            }
+
+            $password = rand(10000000, 99999999);
+
+            $user = new User();
+            $user->email = $request->email;
+            $user = new User();
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->password = Hash::make($password);
+            $user->username = $username;
+            $user->image = $request->input('googlePhotoUrl');
+            $user->save();
+        }
+
+        $tokenResult = $user->createToken('access-token');
+        $token = $tokenResult->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'message' => 'Successfully logged in',
+            'accessToken' => $token,
+            'token_type' => 'Bearer',
+        ]);
+    }
+
+
     /**
      * Get the authenticated User
      *
