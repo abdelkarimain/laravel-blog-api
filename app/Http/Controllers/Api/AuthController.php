@@ -221,6 +221,16 @@ class AuthController extends Controller
     }
 
 
+    public function destroy(Request $request)
+    {
+        $user = Auth::user();
+        $user->delete();
+        return response()->json([
+            'message' => 'Successfully deleted'
+        ]);
+    }
+
+
 
 
 
