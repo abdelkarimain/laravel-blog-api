@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-
-    /* Register API */
     public function register(Request $request)
     {
         $validator = Validator::make(
@@ -72,7 +72,6 @@ class AuthController extends Controller
     }
 
 
-    /* Login API */
     public function login(Request $request)
     {
         $validator = Validator::make(
@@ -147,23 +146,11 @@ class AuthController extends Controller
         ]);
     }
 
-
-    /**
-     * Get the authenticated User
-     *
-     * @return [json] user object
-     */
     public function user(Request $request)
     {
         return response()->json($request->user());
     }
 
-
-    /**
-     * Logout user (Revoke the token)
-     *
-     * @return [string] message
-     */
     public function logout(Request $request)
     {
         try {
@@ -178,4 +165,75 @@ class AuthController extends Controller
         }
 
     }
+
+
+
+
+
+
+
+    public function update(Request $request)
+    {
+        // Get current user
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
+
+        // Validate the data submitted by user
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $userId,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // Update user data
+        $user->name = $request->input('name');
+        $user->username = $request->input('username');
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->input('password'));
+        }
+
+        // Handle image upload if a new image is provided
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = Str::random(10) . "." . $image->getClientOriginalExtension();
+            $image->move('uploads/', $filename);
+            // Delete the old image if it exists
+            if ($user->image) {
+                Storage::delete('uploads/' . $user->image);
+            }
+            $user->image = 'http://127.0.0.1:8000/uploads/' . $filename;
+        }
+
+        // Save the user
+        $user->save();
+
+        return response()->json([
+            'user' => $user,
+            'message' => 'Successfully updated'
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

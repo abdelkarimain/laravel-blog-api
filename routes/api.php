@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,8 +20,10 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('google', [AuthController::class, 'google']);
 
-    Route::group(['middleware' => 'auth:sanctum'], function() {
-      Route::get('logout', [AuthController::class, 'logout']);
-      Route::get('user', [AuthController::class, 'user']);
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('logout', [AuthController::class, 'logout']);
+        Route::get('user', [AuthController::class, 'user']);
+        Route::post('update', [AuthController::class, 'update']);
+
     });
 });
