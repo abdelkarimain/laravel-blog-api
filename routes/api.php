@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +31,6 @@ Route::group(['prefix' => 'auth'], function () {
 
     });
 });
+
+// Routes for managing posts
+Route::apiResource('posts', PostController::class)->middleware('auth:sanctum');
