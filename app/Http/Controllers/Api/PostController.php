@@ -183,11 +183,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
         try {
-            // Find the post
-            $post = Post::findOrFail($id);
+            // Find the post by slug
+            $post = Post::where('slug', $slug)->first();
 
             // Check if the post exists
             if (!$post) {
@@ -231,5 +231,31 @@ class PostController extends Controller
         $post->delete();
         return response()->json(['message' => 'Post deleted successfully']);
 
+    }
+
+
+    public function recentposts()
+    {
+        try {
+            // Retrieve the three most recent posts
+            $recentPosts = Post::orderBy('created_at', 'desc')->take(6)->get();
+
+            return response()->json(
+                [
+                    'message' => 'Recent posts retrieved successfully',
+                    'recentposts' => $recentPosts
+                ],
+                200
+            );
+
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => 'An error occurred while retrieving the recent posts.',
+                    'error' => $e->getMessage()
+                ],
+                500
+            );
+        }
     }
 }
