@@ -19,10 +19,13 @@ class PostController extends Controller
      */
     public function index()
     {
-        // Retrieve all posts
-        $posts = Post::all();
+        // Get the ID of the currently authenticated user
+        $userId = Auth::id();
 
-        return response()->json($posts);
+        // Retrieve posts for the current user with pagination
+        $posts = Post::where('userId', $userId)->paginate(5);
+
+        return response()->json($posts, 200);
     }
 
     /**
@@ -58,7 +61,7 @@ class PostController extends Controller
                 $filename = Str::random(10) . "." . $image->getClientOriginalExtension();
                 $image->move('uploads/posts/', $filename);
 
-                $imageUrl= 'http://127.0.0.1:8000/uploads/posts' . $filename;
+                $imageUrl = 'http://127.0.0.1:8000/uploads/posts/' . $filename;
             }
 
 
@@ -109,23 +112,56 @@ class PostController extends Controller
             // Find the post
             $post = Post::findOrFail($id);
 
+
+
             // Handle image update
-            // if ($request->hasFile('image')) {
-            //     // Delete previous image
-            //     Storage::delete($post->image);
+            if ($request->hasFile('image')) {
+                // Delete the old image if it exists
+                if ($post->image) {
+                    Storage::delete($post->image);
+                }
 
-            //     // Upload new image
-            //     $imagePath = $request->file('image')->store('images');
-            //     $post->image = $imagePath;
-            // }
+                $image = $request->file('image');
+                $filename = Str::random(10) . "." . $image->getClientOriginalExtension();
+                $image->move('uploads/posts/', $filename);
 
-            // Update post attributes
-            $post->update($request->all());
+                $imageUrl = 'http://127.0.0.1:8000/uploads/posts/' . $filename;
+
+                // Update post image URL
+                $post->image = $imageUrl;
+            }
+
+            // Update other post attributes
+            if ($request->filled('title')) {
+                $post->title = $request->title;
+
+                // Generating the slug from the title
+                $baseSlug = Str::slug($request->title);
+                $slug = $baseSlug;
+
+                // make a unique slug
+                $count = 1;
+                while (Post::where('slug', $slug)->exists()) {
+                    $slug = $baseSlug . '-' . $count++;
+                }
+
+                $post->slug = $slug;
+            }
+
+            if ($request->filled('category')) {
+                $post->category = $request->category;
+            }
+
+            if ($request->filled('slug')) {
+                $post->slug = $request->slug;
+            }
+
+            // Update the post
             $post->save();
 
             return response()->json(
-                ['message' => 'Post updated successfully', $post],
-
+                ['message' => 'Post updated successfully', 'post' => $post],
+                200
             );
         } catch (\Exception $e) {
             return response()->json(
@@ -138,6 +174,37 @@ class PostController extends Controller
         }
     }
 
+
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        try {
+            // Find the post
+            $post = Post::findOrFail($id);
+
+            // Check if the post exists
+            if (!$post) {
+                return response()->json(['message' => 'Post not found'], 404);
+            }
+
+            return response()->json($post, 200);
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => 'An error occurred while retrieving the post.',
+                    'error' => $e->getMessage()
+                ],
+                500
+            );
+        }
+    }
 
     /**
      * Remove the specified resource from storage.
