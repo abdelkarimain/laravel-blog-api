@@ -23,7 +23,7 @@ class PostController extends Controller
         $userId = Auth::id();
 
         // Retrieve posts for the current user with pagination
-        $posts = Post::where('userId', $userId)->paginate(5);
+        $posts = Post::where('userId', $userId)->paginate(7);
 
         return response()->json($posts, 200);
     }
@@ -106,6 +106,7 @@ class PostController extends Controller
             $request->validate([
                 'title' => 'string',
                 'category' => 'string|nullable',
+                'content' => 'string|nullable',
                 'slug' => 'unique:posts,slug,' . $id,
             ]);
 
@@ -156,6 +157,10 @@ class PostController extends Controller
                 $post->slug = $request->slug;
             }
 
+            if ($request->filled('content')) {
+                $post->content = $request->content;
+            }
+
             // Update the post
             $post->save();
 
@@ -203,6 +208,27 @@ class PostController extends Controller
                 ],
                 500
             );
+        }
+    }
+
+
+    public function showById($id)
+    {
+        try {
+            // Find the post by ID
+            $post = Post::findOrFail($id);
+
+            // Return the post
+            return response()->json($post, 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Post not found'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the post.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -256,6 +282,35 @@ class PostController extends Controller
                 ],
                 500
             );
+        }
+    }
+
+    public function relatedPosts($slug)
+    {
+        try {
+            // Retrieve the post associated with the given slug
+            $post = Post::where('slug', $slug)->firstOrFail();
+
+            // Extract relevant information (e.g., category) from the post
+            $category = $post->category;
+
+            // Retrieve related posts based on the extracted information
+            $relatedPosts = Post::where('category', $category)
+                ->where('slug', '!=', $slug) // Exclude the current post
+                ->orderBy('created_at', 'desc')
+                ->take(6) // Limit to six related posts
+                ->get();
+
+            return response()->json([
+                'message' => 'Related posts retrieved successfully',
+                'relatedPosts' => $relatedPosts
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the related posts.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

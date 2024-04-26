@@ -37,10 +37,12 @@ Route::group(['prefix' => 'auth'], function () {
 Route::get('posts', [PostController::class, 'index'])->middleware('auth:sanctum');
 Route::post('posts', [PostController::class, 'store'])->middleware('auth:sanctum');
 Route::get('post/{slug}', [PostController::class, 'show'])->middleware('auth:sanctum');
+Route::get('post/findbyid/{id}', [PostController::class, 'showById'])->middleware('auth:sanctum');
 Route::post('posts/{id}', [PostController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('posts/{id}', [PostController::class, 'destroy'])->middleware('auth:sanctum');
 
 Route::get('posts/recent', [PostController::class, 'recentposts'])->middleware('auth:sanctum');
+Route::get('posts/related/{slug}', [PostController::class, 'relatedPosts'])->middleware('auth:sanctum');
 
 
 // routes for managing users

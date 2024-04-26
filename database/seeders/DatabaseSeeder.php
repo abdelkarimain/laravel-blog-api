@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         // Generate 20 unique posts
         for ($i = 0; $i < 20; $i++) {
             $posts[] = [
-                'userId' => 2,
+                'userId' => 1,
                 'content' => $faker->paragraphs(3, true),
                 'title' => $faker->sentence,
                 'slug' => $faker->slug,
