@@ -264,7 +264,7 @@ class PostController extends Controller
     {
         try {
             // Retrieve the three most recent posts
-            $recentPosts = Post::orderBy('created_at', 'desc')->take(6)->get();
+            $recentPosts = Post::orderBy('created_at', 'desc')->take(3)->get();
 
             return response()->json(
                 [
@@ -298,7 +298,7 @@ class PostController extends Controller
             $relatedPosts = Post::where('category', $category)
                 ->where('slug', '!=', $slug) // Exclude the current post
                 ->orderBy('created_at', 'desc')
-                ->take(6) // Limit to six related posts
+                ->take(3) // Limit to six related posts
                 ->get();
 
             return response()->json([
