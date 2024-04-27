@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('users/{id}', [UserController::class, 'destroy']);
 
     // Routes for managing commnets
+    Route::get('getallcomments', [CommentController::class, 'index']);
     Route::post('comment/store', [CommentController::class, 'storeComment']);
     Route::get('comments/show/{postId}', [CommentController::class, 'getPostComments']);
     Route::get('comments/user/{userId}', [CommentController::class, 'getUser']);

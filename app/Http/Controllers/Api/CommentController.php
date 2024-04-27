@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
+
+
+    public function index()
+    {
+        try {
+            $comments = Comment::paginate(7);
+            return response()->json($comments, 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function storeComment(Request $request)
     {
 
