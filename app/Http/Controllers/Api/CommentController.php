@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,6 +40,84 @@ class CommentController extends Controller
         }
     }
 
+    public function getPostComments($postId)
+    {
 
+        try {
+            $comments = Comment::where('post_id', $postId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'comments' => $comments
+            ], 200);
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Get user comments
+    public function getUser($userId)
+    {
+
+        try {
+            $user = User::find($userId);
+            return response()->json([
+                'user' => $user
+            ], 200);
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    // editComment
+    public function editComment(Request $request, $commentId)
+    {
+        try {
+            $comment = Comment::find($commentId);
+            $comment->content = $request->input('content');
+            return response()->json([
+                'message' => 'Comment updated successfully',
+                'comment' => $comment
+            ], 200);
+
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // delete comment
+    public function deleteComment($commentId)
+    {
+        try {
+            $comment = Comment::find($commentId);
+            $comment->delete();
+            return response()->json([
+                'message' => 'Comment deleted successfully'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 }

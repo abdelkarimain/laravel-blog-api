@@ -40,6 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes for managing commnets
     Route::post('comment/store', [CommentController::class, 'storeComment']);
+    Route::get('comments/show/{postId}', [CommentController::class, 'getPostComments']);
+    Route::get('comments/user/{userId}', [CommentController::class, 'getUser']);
+    Route::put('comment/editcomment/{commentId}', [CommentController::class, 'editComment']);
+    Route::delete('comment/deleteComment/{commentId}', [CommentController::class, 'deleteComment']);
 
 });
 
