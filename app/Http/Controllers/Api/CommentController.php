@@ -85,8 +85,9 @@ class CommentController extends Controller
     public function editComment(Request $request, $commentId)
     {
         try {
-            $comment = Comment::find($commentId);
+            $comment = Comment::findOrFail($commentId);
             $comment->content = $request->input('content');
+            $comment->save();
             return response()->json([
                 'message' => 'Comment updated successfully',
                 'comment' => $comment
