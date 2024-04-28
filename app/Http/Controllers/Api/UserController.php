@@ -12,8 +12,20 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('id', '!=', Auth::id())->paginate(5);
-        return response()->json($users);
+        $users = User::where('id', '!=', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+        // $lastMonthUsers = User::whereMonth('created_at', date('m'))->get();
+        $lastMonthUsers = User::whereMonth('created_at', now()->subMonth()->month)
+            ->count();
+
+        return response()->json(
+            [
+                'users' => $users,
+                'lastMonthUsers' => $lastMonthUsers
+            ],
+            200
+        );
     }
 
 

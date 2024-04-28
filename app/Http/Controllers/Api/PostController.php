@@ -23,9 +23,36 @@ class PostController extends Controller
         $userId = Auth::id();
 
         // Retrieve posts for the current user with pagination
-        $posts = Post::where('userId', $userId)->paginate(7);
+        $posts = Post::where('userId', $userId)
+            ->orderBy('created_at', 'desc')
+            ->paginate(7);
+        // $lastMonthPosts = Post::whereMonth('created_at', date('m'))->count();
+        $lastMonthPosts = Post::whereMonth('created_at', now()->subMonth()->month)->count();
 
-        return response()->json($posts, 200);
+        return response()->json(
+            [
+                'posts' => $posts,
+                'lastMonthPosts' => $lastMonthPosts
+            ],
+            200
+        );
+    }
+
+    public function getAllPosts()
+    {
+        try {
+            $posts = Post::orderBy('created_at', 'desc')->paginate(9);
+            return response()->json(
+                ['posts' => $posts],
+                200
+            );
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the posts.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
