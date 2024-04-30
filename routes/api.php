@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -46,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('comment/editComment/{commentId}', [CommentController::class, 'editComment']);
     Route::delete('comment/deleteComment/{commentId}', [CommentController::class, 'deleteComment']);
 
+
 });
 
 // Routes for showing posts [public]
@@ -54,6 +54,7 @@ Route::get('post/{slug}', [PostController::class, 'show']);
 Route::get('posts/recent', [PostController::class, 'recentposts']);
 Route::get('posts/related/{slug}', [PostController::class, 'relatedPosts']);
 Route::get('posts/all', [PostController::class, 'getAllPosts']);
+Route::get('posts/allnopaginate', [PostController::class, 'allnopaginate']);
+Route::get('posts/bycategory/{category}/{paginate?}', [PostController::class, 'getPostsByCategory']);
+Route::get('posts/topcategories/{num}', [PostController::class, 'topcategories']);
 
-
-// Routes for showing commnets

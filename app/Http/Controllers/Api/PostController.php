@@ -55,6 +55,72 @@ class PostController extends Controller
         }
     }
 
+    public function allnopaginate()
+    {
+        try {
+            $posts = Post::orderBy('created_at', 'desc')->get();
+            return response()->json(
+                ['posts' => $posts],
+                200
+            );
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the posts.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function getPostsByCategory($category, $paginate = true)
+    {
+        try {
+            if ($paginate) {
+                $posts = Post::where('category', $category)->orderBy('created_at', 'desc')->paginate(9);
+            } else {
+                $posts = Post::where('category', $category)->orderBy('created_at', 'desc')->get();
+            }
+            return response()->json(
+                ['posts' => $posts],
+                200
+            );
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the posts.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function topcategories($num)
+    {
+        try {
+            if ($num === 'all') {
+                $categories = Post::selectRaw('category, COUNT(*) as category_count')
+                    ->groupBy('category')
+                    ->orderBy('category_count', 'desc')
+                    ->get();
+            } else {
+                $categories = Post::selectRaw('category, COUNT(*) as category_count')
+                    ->groupBy('category')
+                    ->orderBy('category_count', 'desc')
+                    ->take($num)
+                    ->get();
+            }
+
+            return response()->json($categories, 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the categories.',
+                'error' => $e->getMessage()
+            ]);
+        }
+
+    }
+
     /**
      * Store a newly created resource in storage.
      *
