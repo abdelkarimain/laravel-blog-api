@@ -99,23 +99,22 @@ class LikeController extends Controller
         ]);
     }
 
-    function get_like_status(Request $request)
+    function get_like_status($postId)
     {
         $user = Auth::user();
-        $postId = $request->post_id;
 
         $like = Like::where('user_id', $user->id)
             ->where('post_id', $postId)
             ->first();
 
         if (!$like) {
-            return 'none';
+            return response()->json(['reaction_status' => 'none']);
         } elseif ($like->like) {
-            return 'like';
+            return response()->json(['reaction_status' => 'like']);
         } elseif ($like->dislike) {
-            return 'dislike';
+            return response()->json(['reaction_status' => 'dislike']);
         }
 
-        return 'none';
+        return response()->json(['reaction_status' => 'none']);
     }
 }

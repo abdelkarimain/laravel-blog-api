@@ -47,8 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('comment/deleteComment/{commentId}', [CommentController::class, 'deleteComment']);
 
     // Routes for managing commnets
-    Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
-    Route::get('/like-status', [LikeController::class, 'get_like_status']);
+    // Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
+    Route::get('/like-status/{postId}', [LikeController::class, 'get_like_status']);
     Route::post('/like', [LikeController::class, 'save_like']);
 });
 
@@ -61,4 +61,6 @@ Route::get('posts/all', [PostController::class, 'getAllPosts']);
 Route::get('posts/allnopaginate', [PostController::class, 'allnopaginate']);
 Route::get('posts/bycategory/{category}/{paginate?}', [PostController::class, 'getPostsByCategory']);
 Route::get('posts/topcategories/{num}', [PostController::class, 'topcategories']);
+
+Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
 
