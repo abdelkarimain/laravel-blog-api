@@ -17,6 +17,7 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         // Get the ID of the currently authenticated user
@@ -71,7 +72,6 @@ class PostController extends Controller
             ], 500);
         }
     }
-
 
     public function getPostsByCategory($category, $paginate = true)
     {
@@ -128,8 +128,6 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-
-
     public function store(Request $request)
     {
         try {
@@ -183,7 +181,6 @@ class PostController extends Controller
             );
         }
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -272,15 +269,13 @@ class PostController extends Controller
         }
     }
 
-
-
-
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function show($slug)
     {
         try {
@@ -303,7 +298,6 @@ class PostController extends Controller
             );
         }
     }
-
 
     public function showById($id)
     {
@@ -351,7 +345,6 @@ class PostController extends Controller
         return response()->json(['message' => 'Post deleted successfully']);
 
     }
-
 
     public function recentposts()
     {

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\LikeController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -45,7 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('comment/editComment/{commentId}', [CommentController::class, 'editComment']);
     Route::delete('comment/deleteComment/{commentId}', [CommentController::class, 'deleteComment']);
 
-
+    // Routes for managing commnets
+    Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
+    Route::get('/like-status', [LikeController::class, 'get_like_status']);
+    Route::post('/like', [LikeController::class, 'save_like']);
 });
 
 // Routes for showing posts [public]

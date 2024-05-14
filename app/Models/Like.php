@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Like;
 
-class Post extends Model
+class Like extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'userId',
-        'content',
-        'title',
-        'slug',
-        'category',
-        'image',
+        'user_id',
+        'post_id'
     ];
 }
