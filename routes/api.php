@@ -41,13 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes for managing commnets
     Route::get('getallcomments', [CommentController::class, 'index']);
     Route::post('comment/store', [CommentController::class, 'storeComment']);
-    Route::get('comments/show/{postId}', [CommentController::class, 'getPostComments']);
     Route::get('comments/user/{userId}', [CommentController::class, 'getUser']);
     Route::put('comment/editComment/{commentId}', [CommentController::class, 'editComment']);
     Route::delete('comment/deleteComment/{commentId}', [CommentController::class, 'deleteComment']);
 
-    // Routes for managing commnets
-    // Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
+    // Routes for managing likes
     Route::get('/like-status/{postId}', [LikeController::class, 'get_like_status']);
     Route::post('/like', [LikeController::class, 'save_like']);
 });
@@ -62,5 +60,7 @@ Route::get('posts/allnopaginate', [PostController::class, 'allnopaginate']);
 Route::get('posts/bycategory/{category}/{paginate?}', [PostController::class, 'getPostsByCategory']);
 Route::get('posts/topcategories/{num}', [PostController::class, 'topcategories']);
 
+// Routes for showing comments and likes [public]
+Route::get('comments/show/{postId}', [CommentController::class, 'getPostComments']);
 Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
 
