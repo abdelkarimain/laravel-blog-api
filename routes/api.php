@@ -26,7 +26,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 
-
+// routes for managing posts [private routes]
 Route::middleware('auth:sanctum')->group(function () {
     // Routes for managing posts
     Route::get('posts', [PostController::class, 'index']);
@@ -63,4 +63,3 @@ Route::get('posts/topcategories/{num}', [PostController::class, 'topcategories']
 // Routes for showing comments and likes [public]
 Route::get('comments/show/{postId}', [CommentController::class, 'getPostComments']);
 Route::get('/likes/{postId}', [LikeController::class, 'get_reaction_count']);
-
