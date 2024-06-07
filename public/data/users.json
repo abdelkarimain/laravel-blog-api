@@ -1,0 +1,46 @@
+[
+    {
+        "name": "admin admin",
+        "username": "adminadmin",
+        "email": "admin1@ainblog.vercel.app",
+        "image": "http://localhost:8000/base/users/1.png",
+        "email_verified_at": "2023-01-01T12:00:00",
+        "is_admin": true,
+        "remember_token": "someRandomToken",
+        "created_at": "2023-01-01T12:00:00",
+        "updated_at": "2023-01-01T12:00:00"
+    },
+    {
+        "name": "Jane Smith",
+        "username": "janesmith",
+        "email": "user3@ainblog.vercel.app",
+        "image": "http://localhost:8000/base/users/3.png",
+        "email_verified_at": "2024-01-01T12:00:00",
+        "is_admin": false,
+        "remember_token": "anotherRandomToken",
+        "created_at": "2024-01-01T12:00:00",
+        "updated_at": "2024-01-01T12:00:00"
+    },
+    {
+        "name": "Nathaniel Smith",
+        "username": "nathanielsmith",
+        "email": "user2@ainblog.vercel.app",
+        "image": "http://localhost:8000/base/users/2.png",
+        "email_verified_at": "2021-01-01T12:00:00",
+        "is_admin": false,
+        "remember_token": "anotherRandomToken",
+        "created_at": "2021-01-01T12:00:00",
+        "updated_at": "2021-01-01T12:00:00"
+    },
+    {
+        "name": "Selina Smith",
+        "username": "selinasmith",
+        "email": "user4@ainblog.vercel.app",
+        "image": "http://localhost:8000/base/users/4.png",
+        "email_verified_at": "2022-01-01T12:00:00",
+        "is_admin": false,
+        "remember_token": "anotherRandomToken",
+        "created_at": "2022-01-01T12:00:00",
+        "updated_at": "2022-01-01T12:00:00"
+    }
+]

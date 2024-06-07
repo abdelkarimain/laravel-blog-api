@@ -337,7 +337,7 @@ class PostController extends Controller
         // Check if the post has an image
         // if ($post->image) {
         //     // Delete the image
-        //     Storage::delete($post->image);
+        //     ::delete($post->image);
         // }
         // Delete the post
 
@@ -346,11 +346,11 @@ class PostController extends Controller
 
     }
 
-    public function recentposts()
+    public function recentposts($postslug)
     {
         try {
             // Retrieve the three most recent posts
-            $recentPosts = Post::orderBy('created_at', 'desc')->take(3)->get();
+            $recentPosts = Post::where('slug', '<>', $postslug)->orderBy('created_at', 'desc')->take(3)->get();
 
             return response()->json(
                 [

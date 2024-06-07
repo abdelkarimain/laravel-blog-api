@@ -17,7 +17,6 @@ class CommentController extends Controller
     {
         try {
             $comments = Comment::orderBy('created_at', 'desc')->paginate(7);
-            // $lastMonthComments = Comment::whereMonth('created_at', date('m'))->get();
             $lastMonthComments = Comment::whereMonth('created_at', now()->subMonth()->month)
                 ->count();
 

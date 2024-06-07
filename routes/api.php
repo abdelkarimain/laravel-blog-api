@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Routes for showing posts [public]
 Route::get('post/findbyid/{id}', [PostController::class, 'showById']);
 Route::get('post/{slug}', [PostController::class, 'show']);
-Route::get('posts/recent', [PostController::class, 'recentposts']);
+Route::get('posts/recent/{postslug}', [PostController::class, 'recentposts']);
 Route::get('posts/related/{slug}', [PostController::class, 'relatedPosts']);
 Route::get('posts/all', [PostController::class, 'getAllPosts']);
 Route::get('posts/allnopaginate', [PostController::class, 'allnopaginate']);
